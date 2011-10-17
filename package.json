@@ -5,6 +5,7 @@
   "dependencies": {
     "express": "2.4.x",
     "jade": " 0.16.x",
-    "everyauth": "0.2.x"
+    "everyauth": "0.2.x",
+    "node-face": "0.0.x"
   }
 }

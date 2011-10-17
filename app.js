@@ -5,6 +5,7 @@
 
 var express = require('express'),
   everyauth = require('everyauth'),
+  face = require('node-face'),
   User = require('./user.js').User;
 
 var app = module.exports = express.createServer();
@@ -18,6 +19,7 @@ var usersByFbId = {};
 everyauth.facebook
   .appId(process.env.FAACELIFT_FB_APP_ID)
   .appSecret(process.env.FAACELIFT_FB_SECRET)
+  .scope('user_photos')
   .handleAuthCallbackError( function (req, res) {
     // If a user denies your app, Facebook will redirect the user to
     // /auth/facebook/callback?error_reason=user_denied&error=access_denied&error_description=The+user+denied+your+request.
@@ -27,10 +29,20 @@ everyauth.facebook
     // view notifying the user that their authentication failed and why.
   })
   .findOrCreateUser( function (session, accessToken, accessTokExtra, fbUserMetadata){
-    return usersByFbId[fbUserMetadata.id] ||
-      (usersByFbId[fbUserMetadata.id] = addUser(fbUserMetadata, accessToken));
+    var fbId = fbUserMetadata.id,
+      user = usersByFbId[fbId];
+    
+    if (!user){
+      user = addUser(fbUserMetadata, accessToken);
+      usersByFbId[fbId] = user;
+      user.fetchPhotos();
+    }
+    
+    return user;
   })
   .redirectPath('/');
+
+face.init(process.env.FAACELIFT_FACE_API_KEY, process.env.FAACELIFT_FACE_API_SECRET);
 
 app.configure(function(){
   app.set('views', __dirname + '/views');
@@ -66,7 +78,6 @@ function addUser(fbMetadata, fbToken){
 // Routes
 
 app.get('/', function(req, res){
-  console.log(usersById);
   res.render('index', {
     title: 'Express'
   });
