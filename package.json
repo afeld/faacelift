@@ -1,9 +1,10 @@
 {
-    "name": "application-name"
-  , "version": "0.0.1"
-  , "private": true
-  , "dependencies": {
-      "express": "2.4.7"
-    , "jade": ">= 0.0.1"
+  "name": "faacelift",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "2.4.x",
+    "jade": " 0.16.x",
+    "everyauth": "0.2.x"
   }
 }
