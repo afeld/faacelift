@@ -4,13 +4,13 @@
  */
 
 var express = require('express'),
-  everyauth = require('everyauth');
+  everyauth = require('everyauth'),
+  User = require('./user.js').User;
 
 var app = module.exports = express.createServer();
 
 everyauth.debug = true;
 var usersById = {};
-var nextUserId = 0;
 var usersByFbId = {};
 
 // Configuration
@@ -26,9 +26,9 @@ everyauth.facebook
     // If you do not configure this, everyauth renders a default fallback
     // view notifying the user that their authentication failed and why.
   })
-  .findOrCreateUser( function (session, accessToken, accessTokExtra, fbUserMetadata) {
+  .findOrCreateUser( function (session, accessToken, accessTokExtra, fbUserMetadata){
     return usersByFbId[fbUserMetadata.id] ||
-      (usersByFbId[fbUserMetadata.id] = addUser('facebook', fbUserMetadata));
+      (usersByFbId[fbUserMetadata.id] = addUser(fbUserMetadata, accessToken));
   })
   .redirectPath('/');
 
@@ -37,6 +37,7 @@ app.configure(function(){
   app.set('view engine', 'jade');
   app.use(express.bodyParser());
   
+  // modules needed for everyauth
   app.use(express.cookieParser());
   app.use(express.session({secret: process.env.FAACELIFT_FB_SECRET}));
   app.use(everyauth.middleware());
@@ -56,22 +57,16 @@ app.configure('production', function(){
 
 // Helpers
 
-function addUser (source, sourceUser) {
-  var user;
-  if (arguments.length === 1) { // password-based
-    user = sourceUser = source;
-    user.id = ++nextUserId;
-    return usersById[nextUserId] = user;
-  } else { // non-password-based
-    user = usersById[++nextUserId] = {id: nextUserId};
-    user[source] = sourceUser;
-  }
+function addUser(fbMetadata, fbToken){
+  var user = new User(fbMetadata, fbToken);
+  usersById[user.id] = user;
   return user;
 }
 
 // Routes
 
 app.get('/', function(req, res){
+  console.log(usersById);
   res.render('index', {
     title: 'Express'
   });
