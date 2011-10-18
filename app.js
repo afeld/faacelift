@@ -12,9 +12,8 @@ var express = require('express'),
 
 var app = module.exports = express.createServer();
 
-// Configuration
 
-everyauth.debug = true;
+// Configuration
 
 mongoose.connect('mongodb://localhost/faacelift_dev');
 
@@ -60,6 +59,7 @@ app.configure(function(){
 });
 
 app.configure('development', function(){
+  everyauth.debug = true;
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
 });
 
@@ -67,13 +67,50 @@ app.configure('production', function(){
   app.use(express.errorHandler()); 
 });
 
+
 // Routes
 
 app.get('/', function(req, res){
-  res.render('index', {
-    title: 'Express'
-  });
+  var user = req.user;
+  if (user && user.fb && user.fb.id){
+    res.redirect('/' + user.fb.id);
+  } else {
+    // force them to log in
+    res.redirect(everyauth.facebook.entryPath());
+    
+    // res.render('index', {
+    //   title: 'Express'
+    // });
+  }
 });
+
+app.get('/:fbId', function(req, res){
+  var fbId = req.params.fbId,
+    user = req.user;
+  
+  if (user && user.fb && user.fb.id === fbId){
+    // current user viewing themselves
+    onUserView(user, res);
+  } else {
+    User.findOne({'fb.id': fbId}, function(err, user){
+      if (user){
+        onUserView(user, res);
+      }
+    });
+  }
+});
+
+
+function onUserView(user, res){
+  if (user.photos.length){
+    res.send(JSON.stringify(user))
+  } else {
+    user.fetchPhotos(function(photos){
+      res.send(JSON.stringify(user));
+    });
+  }
+}
+
 
 mongooseAuth.helpExpress(app);
 everyauth.helpExpress(app);

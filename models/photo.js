@@ -6,7 +6,7 @@ var Photo = new Schema({
   pid: String,
   width: Number,
   height: Number,
-  tags: [{}]
+  tags: []
 });
 
-mongoose.model('Photo', Photo);
+exports.Photo = Photo;
