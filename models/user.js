@@ -1,36 +1,27 @@
-var face = require('node-face');
+var mongoose = require('mongoose'),
+  mongooseAuth = require('mongoose-auth'),
+  face = require('node-face');
 
-var nextUserId = 0;
+require('./photo.js');
+var Photo = mongoose.model('Photo');
 
-// constructor
-var User = function(fbMetadata, fbToken){
-  this.id = ++nextUserId;
-  this.fbMetadata = fbMetadata;
-  this.fbToken = fbToken;
-}
+var UserSchema = new mongoose.Schema({
+  // mongoose-auth adds fields as well
+  photos: [Photo],
+});
 
-User.prototype = {
-  id: undefined,
-  fbMetadata: undefined,
-  fbToken: undefined,
-  photos: [],
-  
-  fetchPhotos: function(){
-    face.facebook.get({
-      uids: this.fbMetadata.id,
-      user_auth: {
-        fb_user: this.fbMetadata.id,
-        fb_oauth_token: this.fbToken
-      },
-      success: this.onPhotosFetched,
-      scope: this
-    });
-  },
-  
-  // private
-  onPhotosFetched: function(data){
-    this.photos = this.photos.concat(data.photos);
-  }
+UserSchema.methods.fetchPhotos = function(){
+  face.facebook.get({
+    uids: this.fbMetadata.id,
+    user_auth: {
+      fb_user: this.fbMetadata.id,
+      fb_oauth_token: this.fbToken
+    },
+    success: function(data){
+      this.photos.push(data.photos);
+    },
+    scope: this
+  });
 };
 
-exports.User = User;
+exports.UserSchema = UserSchema;
