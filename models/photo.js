@@ -1,7 +1,6 @@
-var mongoose = require('mongoose'),
-  Schema = mongoose.Schema;
+var mongoose = require('mongoose');
 
-var Photo = new Schema({
+var PhotoSchema = new mongoose.Schema({
   url: String,
   pid: String,
   width: Number,
@@ -9,4 +8,4 @@ var Photo = new Schema({
   tags: []
 });
 
-exports.Photo = Photo;
+exports.PhotoSchema = PhotoSchema;

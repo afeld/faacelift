@@ -1,11 +1,10 @@
 var mongoose = require('mongoose'),
-  mongooseAuth = require('mongoose-auth'),
   face = require('node-face'),
-  Photo = require('./photo.js').Photo;
+  PhotoSchema = require('./photo.js').PhotoSchema;
 
 var UserSchema = new mongoose.Schema({
   // mongoose-auth adds fields as well
-  photos: [Photo],
+  photos: [PhotoSchema],
 });
 
 UserSchema.methods.fetchPhotos = function(callback, scope){
