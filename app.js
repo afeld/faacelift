@@ -6,7 +6,7 @@
 var express = require('express'),
   everyauth = require('everyauth'),
   face = require('node-face'),
-  User = require('./user.js').User;
+  User = require('./models/user.js').User;
 
 var app = module.exports = express.createServer();
 
