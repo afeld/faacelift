@@ -22,7 +22,7 @@ UserSchema.methods.fetchPhotos = function(callback, scope){
       });
       
       this.save(function(err){
-        callback.call(scope, photos);
+        callback.call(scope, self.photos);
       });
     },
     scope: this
