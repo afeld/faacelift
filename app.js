@@ -15,7 +15,30 @@ var app = module.exports = express.createServer();
 
 // Configuration
 
-mongoose.connect('mongodb://localhost/faacelift_dev');
+if (!process.env.FAACELIFT_FB_APP_ID){
+	throw "FAACELIFT_FB_APP_ID must be set";
+}
+if (!process.env.FAACELIFT_FB_SECRET){
+  throw "FAACELIFT_FB_SECRET must be set";
+}
+if (!process.env.FAACELIFT_FACE_API_KEY){
+  throw "FAACELIFT_FACE_API_KEY must be set";
+}
+if (!process.env.FAACELIFT_FACE_API_SECRET){
+  throw "FAACELIFT_FACE_API_SECRET must be set";
+}
+
+app.configure('development', function(){
+  everyauth.debug = true;
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+  mongoose.connect('mongodb://localhost/faacelift_dev');
+});
+
+app.configure('production', function(){
+  app.use(express.errorHandler());
+  mongoose.connect('mongodb://localhost/faacelift_prod');
+});
+
 
 var User;
 UserSchema.plugin(mongooseAuth, {
@@ -30,7 +53,7 @@ UserSchema.plugin(mongooseAuth, {
   
   facebook: {
     everyauth: {
-      myHostname: 'http://local.host:3000',
+      myHostname: 'http://localhost:3000',
       appId: process.env.FAACELIFT_FB_APP_ID,
       appSecret: process.env.FAACELIFT_FB_SECRET,
       scope: 'user_photos',
@@ -56,15 +79,6 @@ app.configure(function(){
   app.use(express.methodOverride());
   // app.use(app.router); // removed for mongoose-auth
   app.use(express.static(__dirname + '/public'));
-});
-
-app.configure('development', function(){
-  everyauth.debug = true;
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
-});
-
-app.configure('production', function(){
-  app.use(express.errorHandler()); 
 });
 
 
