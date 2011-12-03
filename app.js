@@ -36,7 +36,7 @@ app.configure('development', function(){
 
 app.configure('production', function(){
   app.use(express.errorHandler());
-  mongoose.connect('mongodb://localhost/faacelift_prod');
+  mongoose.connect(process.env.MONGOHQ_URL);
 });
 
 
