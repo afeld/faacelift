@@ -8,6 +8,8 @@ var UserSchema = new mongoose.Schema({
 });
 
 UserSchema.methods.fetchPhotos = function(callback, scope){
+  console.log('fetching photos for user fbid:' + this.fb.id);
+  
   face.facebook.get({
     uids: this.fb.id,
     user_auth: {
@@ -15,6 +17,8 @@ UserSchema.methods.fetchPhotos = function(callback, scope){
       fb_oauth_token: this.fb.accessToken
     },
     success: function(data){
+      console.log('photos retrieved for user fbid:' + this.fb.id);
+      
       var self = this;
       data.photos.forEach(function(photo){
         // var doc = new Photo(photo);
@@ -24,6 +28,9 @@ UserSchema.methods.fetchPhotos = function(callback, scope){
       this.save(function(err){
         callback.call(scope, self.photos);
       });
+    },
+    error: function(){
+      console.log('photos retrieval failed for user fbid:' + this.fb.id + ' - ' + util.inspect(arguments));
     },
     scope: this
   });
