@@ -30,8 +30,8 @@ UserSchema.methods.fetchPhotos = function(callback, scope){
         callback.call(scope, self.photos);
       });
     },
-    error: function(){
-      console.log('photos retrieval failed for user fbid:' + this.fb.id + ' - ' + util.inspect(arguments));
+    error: function(err, response, body){
+      console.log('photos retrieval failed for user fbid:' + this.fb.id + ' - ' + util.inspect(body));
     },
     scope: this
   });
