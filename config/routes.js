@@ -7,7 +7,8 @@ function onUserView(user, res, format){
   } else {
     res.render('show', {
       title: user.fb.name.full,
-      user: user
+      user: user,
+      user_photo_json: JSON.stringify(user.photos)
     });
     
     if (!user.photos.length){
