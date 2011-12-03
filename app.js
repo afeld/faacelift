@@ -40,7 +40,6 @@ app.configure('production', function(){
 });
 
 
-var User;
 UserSchema.plugin(mongooseAuth, {
   // Here, we attach your User model to every module
   everymodule: {
@@ -61,7 +60,7 @@ UserSchema.plugin(mongooseAuth, {
     }
   }
 });
-User = mongoose.model('User', UserSchema);
+var User = mongoose.model('User', UserSchema);
 
 face.init(process.env.FAACELIFT_FACE_API_KEY, process.env.FAACELIFT_FACE_API_SECRET);
 
