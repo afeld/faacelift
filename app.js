@@ -52,7 +52,7 @@ UserSchema.plugin(mongooseAuth, {
   
   facebook: {
     everyauth: {
-      myHostname: 'http://localhost:3000',
+      myHostname: process.env.HOSTNAME ? ('http://' + process.env.HOSTNAME) : 'http://localhost:3000',
       appId: process.env.FAACELIFT_FB_APP_ID,
       appSecret: process.env.FAACELIFT_FB_SECRET,
       scope: 'user_photos',
