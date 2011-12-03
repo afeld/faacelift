@@ -1,13 +1,21 @@
 var mongoose = require('mongoose'),
   User = mongoose.model('User');
 
-function onUserView(user, res){
-  if (user.photos.length){
-    res.send(JSON.stringify(user))
+function onUserView(user, res, format){
+  if (format === 'json'){
+    res.send(JSON.stringify(user));
   } else {
-    user.fetchPhotos(function(photos){
-      res.send(JSON.stringify(user));
+    res.render('show', {
+      title: user.fb.name.full,
+      user: user
     });
+    
+    if (!user.photos.length){
+      // kick off fetching photos, even though we have already responded to the request
+      user.fetchPhotos(function(photos){
+        // res.send(JSON.stringify(user));
+      });
+    }
   }
 }
 
@@ -26,17 +34,17 @@ module.exports = function(app, mongooseAuth, everyauth){
     }
   });
 
-  app.get('/:fbId', function(req, res){
+  app.get('/:fbId.:format?', function(req, res){
     var fbId = req.params.fbId,
       user = req.user;
-
+    
     if (user && user.fb && user.fb.id === fbId){
       // current user viewing themselves
-      onUserView(user, res);
+      onUserView(user, res, req.params.format);
     } else {
       User.findOne({'fb.id': fbId}, function(err, user){
         if (user){
-          onUserView(user, res);
+          onUserView(user, res, req.params.format);
         }
       });
     }
