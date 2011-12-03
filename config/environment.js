@@ -24,7 +24,7 @@ module.exports = function(app, express){
 
   app.configure(function(){
     app.set('views', __dirname + '/../views');
-    app.set('view engine', 'jade');
+    app.set('view engine', 'hbs');
     app.use(express.bodyParser());
   
     // modules needed for everyauth

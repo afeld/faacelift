@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "express": "2.4.x",
-    "jade": " 0.16.x",
+    "hbs": "1.0.x",
     "everyauth": "0.2.x",
     "mongoose": "2.3.x",
     "mongoose-auth": "0.0.11",
