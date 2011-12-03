@@ -1,6 +1,7 @@
 var mongoose = require('mongoose'),
   face = require('node-face'),
-  PhotoSchema = require('./photo.js').PhotoSchema;
+  PhotoSchema = require('./photo.js').PhotoSchema,
+  util = require('util');
 
 var UserSchema = new mongoose.Schema({
   // mongoose-auth adds fields as well
