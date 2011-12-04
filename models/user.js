@@ -47,4 +47,12 @@ UserSchema.methods.fetchPhotos = function(options){
   });
 };
 
+
+UserSchema.methods.photoDataAsPx = function(){
+   return _u.map(this.photos, function(photo){
+     return face.photoDataToPx(photo);
+   });
+};
+
+
 exports.UserSchema = UserSchema;
