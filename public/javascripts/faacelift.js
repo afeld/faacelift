@@ -4,7 +4,7 @@ var container, stats;
 
 var camera, scene, renderer;
 
-var mesh, group1, group2, group3, light;
+var mesh, group1, light;
 
 var mouseX = 0, mouseY = 0;
 
@@ -36,31 +36,15 @@ function init() {
   mesh.rotation.x = - 90 * Math.PI / 180;
   scene.add( mesh );
 
-  mesh = new THREE.Mesh( shadowGeo, shadowMaterial );
-  mesh.position.y = - 250;
-  mesh.position.x = - 400;
-  mesh.rotation.x = - 90 * Math.PI / 180;
-  scene.add( mesh );
-
-  mesh = new THREE.Mesh( shadowGeo, shadowMaterial );
-  mesh.position.y = - 250;
-  mesh.position.x = 400;
-  mesh.rotation.x = - 90 * Math.PI / 180;
-  scene.add( mesh );
-
   var faceIndices = [ 'a', 'b', 'c', 'd' ];
 
-  var color, f, f2, f3, p, n, vertexIndex,
+  var color, f, p, n, vertexIndex,
 
-    geometry  = new THREE.IcosahedronGeometry( 1 ),
-    geometry2 = new THREE.IcosahedronGeometry( 1 ),
-    geometry3 = new THREE.IcosahedronGeometry( 1 );
+    geometry  = new THREE.IcosahedronGeometry( 1 );
 
   for ( var i = 0; i < geometry.faces.length; i ++ ) {
 
     f  = geometry.faces[ i ];
-    f2 = geometry2.faces[ i ];
-    f3 = geometry3.faces[ i ];
 
     n = ( f instanceof THREE.Face3 ) ? 3 : 4;
 
@@ -75,16 +59,6 @@ function init() {
 
       f.vertexColors[ j ] = color;
 
-      color = new THREE.Color( 0xffffff );
-      color.setHSV( 0.0, ( p.y + 1 ) / 2, 1.0 );
-
-      f2.vertexColors[ j ] = color;
-
-      color = new THREE.Color( 0xffffff );
-      color.setHSV( 0.125 * vertexIndex/geometry.vertices.length, 1.0, 1.0 );
-
-      f3.vertexColors[ j ] = color;
-
     }
 
   }
@@ -98,22 +72,10 @@ function init() {
   ];
 
   group1 = THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
-  group1.position.x = -400;
-  group1.rotation.x = -1.87;
+  group1.position.x = 0;
+  group1.rotation.x = 0;
   group1.scale.set( 200, 200, 200 );
   scene.add( group1 );
-
-  group2 = THREE.SceneUtils.createMultiMaterialObject( geometry2, materials );
-  group2.position.x = 400;
-  group2.rotation.x = 0;
-  group2.scale = group1.scale;
-  scene.add( group2 );
-
-  group3 = THREE.SceneUtils.createMultiMaterialObject( geometry3, materials );
-  group3.position.x = 0;
-  group3.rotation.x = 0;
-  group3.scale = group1.scale;
-  scene.add( group3 );
 
   renderer = new THREE.WebGLRenderer( { antialias: true } );
   renderer.setSize( window.innerWidth, window.innerHeight );
