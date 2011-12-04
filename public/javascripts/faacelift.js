@@ -39,8 +39,7 @@ function init() {
   var faceIndices = [ 'a', 'b', 'c', 'd' ];
 
   var color, f, p, n, vertexIndex,
-
-    geometry  = new THREE.IcosahedronGeometry( 1 );
+    geometry = new THREE.SphereGeometry( 1, 30, 15 );
 
   for ( var i = 0; i < geometry.faces.length; i ++ ) {
 
