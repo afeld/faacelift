@@ -1,7 +1,7 @@
 var mongoose = require('mongoose'),
   face = require('node-face'),
   PhotoSchema = require('./photo.js').PhotoSchema,
-  _ = require('underscore'),
+  _u = require('underscore'),
   util = require('util');
 
 var UserSchema = new mongoose.Schema({
@@ -12,7 +12,7 @@ var UserSchema = new mongoose.Schema({
 UserSchema.methods.fetchPhotos = function(options){
   console.log('fetching photos for user fbid:' + this.fb.id);
   
-  var params = _.extend({
+  var params = _u.extend({
     scope: this
   }, options);
   
