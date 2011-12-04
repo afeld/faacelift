@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
-  User = mongoose.model('User');
+  User = mongoose.model('User'),
+  request = require('request');
 
 function onUserView(user, req, res, everyauth){
   if (req.params.format === 'json'){
@@ -48,6 +49,14 @@ module.exports = function(app, mongooseAuth, everyauth){
       //   title: 'Express'
       // });
     }
+  });
+  
+  app.get('/proxy', function(req, res){
+    var r = request({
+      url: req.param('src')
+    });
+    
+    r.pipe(res);
   });
 
   app.get('/:fbId.:format?', function(req, res){

@@ -9,6 +9,7 @@
     "mongoose": "2.3.x",
     "mongoose-auth": "0.0.11",
     "node-face": "0.0.x",
-    "underscore": "1.2.x"
+    "underscore": "1.2.x",
+    "request": "2.2.x"
   }
 }
