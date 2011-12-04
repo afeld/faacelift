@@ -66,7 +66,7 @@ function init() {
 
   var materials = [
 
-    new THREE.MeshLambertMaterial( { color: 0xffffff, shading: THREE.FlatShading, vertexColors: THREE.VertexColors } ),
+    new THREE.MeshLambertMaterial( { ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( '/proxy?src=' + Faacelift.photos[0].url ) } ),
     new THREE.MeshBasicMaterial( { color: 0x000000, shading: THREE.FlatShading, wireframe: true, transparent: true } )
 
   ];
