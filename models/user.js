@@ -1,6 +1,7 @@
 var mongoose = require('mongoose'),
   face = require('node-face'),
   PhotoSchema = require('./photo.js').PhotoSchema,
+  _ = require('underscore'),
   util = require('util');
 
 var UserSchema = new mongoose.Schema({
@@ -8,8 +9,12 @@ var UserSchema = new mongoose.Schema({
   photos: [PhotoSchema],
 });
 
-UserSchema.methods.fetchPhotos = function(callback, scope){
+UserSchema.methods.fetchPhotos = function(options){
   console.log('fetching photos for user fbid:' + this.fb.id);
+  
+  var params = _.extend({
+    scope: this
+  }, options);
   
   face.facebook.get({
     uids: this.fb.id,
@@ -27,11 +32,16 @@ UserSchema.methods.fetchPhotos = function(callback, scope){
       });
       
       this.save(function(err){
-        callback.call(scope, self.photos);
+        if (params.success){
+          params.success.call(params.scope, self.photos);
+        }
       });
     },
     error: function(err, response, body){
       console.log('photos retrieval failed for user fbid:' + this.fb.id + ' - ' + util.inspect(body));
+      if (params.error){
+        params.error.apply(params.scope, arguments);
+      }
     },
     scope: this
   });

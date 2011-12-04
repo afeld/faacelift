@@ -1,24 +1,39 @@
 var mongoose = require('mongoose'),
   User = mongoose.model('User');
 
-function onUserView(user, res, format){
-  if (format === 'json'){
+function onUserView(user, req, res, everyauth){
+  if (req.params.format === 'json'){
     res.send(JSON.stringify(user));
   } else {
-    res.render('show', {
-      title: user.fb.name.full,
-      user: user,
-      user_photo_json: JSON.stringify(user.photos)
-    });
-    
-    if (!user.photos.length){
+    if (user.photos.length){
+      renderView(res, user);
+    } else {
       // kick off fetching photos, even though we have already responded to the request
-      user.fetchPhotos(function(photos){
-        // res.send(JSON.stringify(user));
+      user.fetchPhotos({
+        success: function(photos){
+          renderView(res, user);
+        },
+        error: function(err, response, body){
+          // token expired - we should reauthenitcate, but token doesn't get replaced,
+          // see https://github.com/bnoguchi/mongoose-auth/issues/60
+          // for now, destroy user
+          user.remove(function(error){
+            res.redirect(everyauth.facebook.entryPath());
+          });
+        }
       });
     }
   }
 }
+
+function renderView(res, user){
+  res.render('show', {
+    title: user.fb.name.full,
+    user: user,
+    user_photo_json: JSON.stringify(user.photos)
+  });
+}
+
 
 module.exports = function(app, mongooseAuth, everyauth){
   app.get('/', function(req, res){
@@ -41,11 +56,11 @@ module.exports = function(app, mongooseAuth, everyauth){
     
     if (user && user.fb && user.fb.id === fbId){
       // current user viewing themselves
-      onUserView(user, res, req.params.format);
+      onUserView(user, req, res, everyauth);
     } else {
       User.findOne({'fb.id': fbId}, function(err, user){
         if (user){
-          onUserView(user, res, req.params.format);
+          onUserView(user, req, res, everyauth);
         }
       });
     }
