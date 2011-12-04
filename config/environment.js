@@ -35,7 +35,6 @@ module.exports = function(app, express){
   
     app.use(express.methodOverride());
     // app.use(app.router); // removed for mongoose-auth
-    app.use(express.static(__dirname + '/public'));
   });
   
   
