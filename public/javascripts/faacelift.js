@@ -33,41 +33,28 @@ function init() {
 
   mesh = new THREE.Mesh( shadowGeo, shadowMaterial );
   mesh.position.y = - 250;
-  mesh.rotation.x = - 90 * Math.PI / 180;
   scene.add( mesh );
 
   var faceIndices = [ 'a', 'b', 'c', 'd' ];
 
   var color, f, p, n, vertexIndex,
-    geometry = new THREE.SphereGeometry( 1, 30, 15 );
+    sphereRadius = 1,
+    sphereDiameter = 2 * Math.PI * sphereRadius,
+    geometry = new THREE.SphereGeometry( sphereRadius, 30, 15 );
 
-  for ( var i = 0; i < geometry.faces.length; i ++ ) {
+  var photoData = Faacelift.photos[1],
+    photoTex = THREE.ImageUtils.loadTexture( '/proxy?src=' + photoData.url )
+    photoScale = 1; //100 / photoData.tags[0].height;
 
-    f  = geometry.faces[ i ];
-
-    n = ( f instanceof THREE.Face3 ) ? 3 : 4;
-
-    for( var j = 0; j < n; j++ ) {
-
-      vertexIndex = f[ faceIndices[ j ] ];
-
-      p = geometry.vertices[ vertexIndex ].position;
-
-      color = new THREE.Color( 0xffffff );
-      color.setHSV( ( p.y + 1 ) / 2, 1.0, 1.0 );
-
-      f.vertexColors[ j ] = color;
-
-    }
-
-  }
-
+  photoTex.repeat.x = photoScale;
+  photoTex.repeat.y = photoScale;
+  
+  photoTex.offset.x = 0; // -1 * ((photoData.tags[0].nose.x / 100) - 0.5);
+  photoTex.offset.y = (photoData.tags[0].nose.y / 100) - 0.5;
 
   var materials = [
-
-    new THREE.MeshLambertMaterial( { ambient: 0xffffff, map: THREE.ImageUtils.loadTexture( '/proxy?src=' + Faacelift.photos[0].url ) } ),
+    new THREE.MeshLambertMaterial( { ambient: 0xffffff, map: photoTex } ),
     new THREE.MeshBasicMaterial( { color: 0x000000, shading: THREE.FlatShading, wireframe: true, transparent: true } )
-
   ];
 
   group1 = THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
