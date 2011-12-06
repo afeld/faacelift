@@ -28,10 +28,12 @@ function onUserView(user, req, res, everyauth){
 }
 
 function renderView(res, user){
+  var photoData = user.photoDataAsPx();
+  
   res.render('show', {
     title: user.fb.name.full,
     user: user,
-    user_photo_json: JSON.stringify(user.photos)
+    user_photo_json: JSON.stringify(photoData)
   });
 }
 
