@@ -17,21 +17,27 @@ Faacelift = {
       scale = 0.7,
       faceLeft = tag.center.x - (tag.width / 2),
       faceTop = tag.center.y - (tag.height / 2),
-      destLeft = (this.canvasEl.width * (1 - scale) / 2) + (tag.yaw * 1.5),
-      destTop = this.canvasEl.height * (1 - scale) / 2,
-      photoCenterX = destLeft + (tag.width / 2),
-      photoCenterY = destTop + (tag.height / 2);
-    
+      radius = this.canvasEl.width / 2,
+      noseOffsetX = radius * Math.sin(tag.yaw * Math.PI / 180), // from center
+      faceWidth = this.canvasEl.width * scale,
+      faceHeight = this.canvasEl.height * scale,
+      noseToFaceLeft = -1 * (tag.nose.x - faceLeft) * (faceWidth / tag.width),
+      noseToFaceTop = -1 * (tag.nose.y - faceTop) * (faceHeight / tag.height);
+      
     
     img.onload = $.proxy(function(){
       // clear the canvas
       this.ctx.clearRect(0, 0, this.canvasEl.width, this.canvasEl.height);
       
       this.ctx.save();
-      this.ctx.translate(photoCenterX, photoCenterY);
-      this.ctx.rotate(-1 * tag.roll * Math.PI / 180);
-      this.ctx.translate(-photoCenterX, -photoCenterY);
-      this.ctx.drawImage(img, faceLeft, faceTop, tag.width, tag.height, destLeft, destTop, this.canvasEl.width * scale, this.canvasEl.height * scale);
+      
+      this.ctx.translate(this.canvasEl.width / 2, this.canvasEl.height / 2); // center-center
+      this.ctx.translate(noseOffsetX, 0); // where nose will be centered
+      this.ctx.rotate(-1 * tag.roll * Math.PI / 180); // un-tilt the face
+      this.ctx.translate(noseToFaceLeft, noseToFaceTop);
+      
+      this.ctx.drawImage(img, faceLeft, faceTop, tag.width, tag.height, 0, 0, faceWidth, faceHeight);
+      
       this.ctx.restore();
     }, this);
     img.src = '/proxy?src=' + photoData.url;
