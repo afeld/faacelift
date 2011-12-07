@@ -72,6 +72,8 @@ module.exports = function(app, mongooseAuth, everyauth){
       User.findOne({'fb.id': fbId}, function(err, user){
         if (user){
           onUserView(user, req, res, everyauth);
+        } else {
+          res.send('user not found', 404);
         }
       });
     }
