@@ -17,14 +17,22 @@ Faacelift = {
       scale = 0.7,
       faceLeft = tag.center.x - (tag.width / 2),
       faceTop = tag.center.y - (tag.height / 2),
-      destX = (this.canvasEl.width * (1 - scale) / 2) + (tag.yaw * 1.5),
-      destY = this.canvasEl.height * (1 - scale) / 2;
+      destLeft = (this.canvasEl.width * (1 - scale) / 2) + (tag.yaw * 1.5),
+      destTop = this.canvasEl.height * (1 - scale) / 2,
+      photoCenterX = destLeft + (tag.width / 2),
+      photoCenterY = destTop + (tag.height / 2);
+    
     
     img.onload = $.proxy(function(){
       // clear the canvas
       this.ctx.clearRect(0, 0, this.canvasEl.width, this.canvasEl.height);
       
-      this.ctx.drawImage(img, faceLeft, faceTop, tag.width, tag.height, destX, destY, this.canvasEl.width * scale, this.canvasEl.height * scale);
+      this.ctx.save();
+      this.ctx.translate(photoCenterX, photoCenterY);
+      this.ctx.rotate(-1 * tag.roll * Math.PI / 180);
+      this.ctx.translate(-photoCenterX, -photoCenterY);
+      this.ctx.drawImage(img, faceLeft, faceTop, tag.width, tag.height, destLeft, destTop, this.canvasEl.width * scale, this.canvasEl.height * scale);
+      this.ctx.restore();
     }, this);
     img.src = '/proxy?src=' + photoData.url;
   },
