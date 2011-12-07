@@ -14,10 +14,10 @@ Faacelift = {
   drawImage: function(photoData){
     var img = new Image(),
       tag = photoData.tags[0],
-      scale = 0.7,
+      scale = 0.8,
       faceLeft = tag.center.x - (tag.width / 2),
       faceTop = tag.center.y - (tag.height / 2),
-      radius = this.canvasEl.width / 2,
+      radius = (this.canvasEl.width / 2) * scale,
       noseOffsetX = radius * Math.sin(tag.yaw * Math.PI / 180), // from center
       faceWidth = this.canvasEl.width * scale,
       faceHeight = this.canvasEl.height * scale,
