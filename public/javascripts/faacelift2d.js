@@ -14,12 +14,17 @@ Faacelift = {
   drawImage: function(photoData){
     var img = new Image(),
       tag = photoData.tags[0],
-      scale = 0.8,
+      scale = 0.7,
       faceLeft = tag.center.x - (tag.width / 2),
-      faceTop = tag.center.y - (tag.height / 2);
+      faceTop = tag.center.y - (tag.height / 2),
+      destX = (this.canvasEl.width * (1 - scale) / 2) + (tag.yaw * 1.5),
+      destY = this.canvasEl.height * (1 - scale) / 2;
     
     img.onload = $.proxy(function(){
-      this.ctx.drawImage(img, faceLeft, faceTop, tag.width, tag.height, this.canvasEl.width * (1 - scale) / 2, this.canvasEl.height * (1 - scale) / 2, this.canvasEl.width * scale, this.canvasEl.height * scale);
+      // clear the canvas
+      this.ctx.clearRect(0, 0, this.canvasEl.width, this.canvasEl.height);
+      
+      this.ctx.drawImage(img, faceLeft, faceTop, tag.width, tag.height, destX, destY, this.canvasEl.width * scale, this.canvasEl.height * scale);
     }, this);
     img.src = '/proxy?src=' + photoData.url;
   },
