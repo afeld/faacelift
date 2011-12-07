@@ -17,6 +17,7 @@ UserSchema.methods.fetchPhotos = function(options){
   }, options);
   
   face.facebook.get({
+    limit: 15,
     uids: this.fb.id,
     user_auth: {
       fb_user: this.fb.id,

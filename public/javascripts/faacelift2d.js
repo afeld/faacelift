@@ -4,6 +4,10 @@ Faacelift = {
     this.canvasEl = document.getElementById('canvas');
     this.ctx = this.canvasEl.getContext('2d');
     
+    this.photos.sort(function(a, b){
+      return a.tags[0].yaw - b.tags[0].yaw;
+    });
+    
     this.$window.mousemove($.proxy(this.onMouseMove, this));
   },
 
@@ -22,10 +26,13 @@ Faacelift = {
   
   onMouseMove: function(e){
     var numPhotos = this.photos.length,
-      photoIndex = Math.floor(e.pageX / (this.$window.width() / numPhotos)),
-      photoData = this.photos[photoIndex];
+      photoIndex = Math.floor(e.pageX / (this.$window.width() / numPhotos));
     
-    this.drawImage(photoData);
+    if (this.currentPhotoIndex !== photoIndex){
+      this.currentPhotoIndex = photoIndex;
+      var photoData = this.photos[photoIndex];
+      this.drawImage(photoData);
+    }
   }
 };
 
